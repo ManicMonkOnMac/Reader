@@ -45,6 +45,9 @@
 @property (nonatomic, unsafe_unretained, readwrite) id <ReaderMainPagebarDelegate> delegate;
 
 - (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object;
+- (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object lightColor:(UIColor*)lightColor darkColor:(UIColor*)darkColor;
+
+- (void)setColors:(UIColor *)lightColor dark:(UIColor *)darkColor;
 
 - (void)updatePagebar;
 

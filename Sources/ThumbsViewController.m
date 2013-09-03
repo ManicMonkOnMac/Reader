@@ -84,6 +84,15 @@
 	return thumbs;
 }
 
+- (void)setThemeColors:(UIColor *)lightColor dark:(UIColor *)darkColor
+{
+    // Set theme preferences.
+    _lightColor = lightColor;
+    _darkColor = darkColor;
+    
+    // Update the toolbar with the new colors.
+    [mainToolbar setColors:lightColor dark:darkColor];
+}
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
@@ -99,6 +108,10 @@
 	CGRect toolbarRect = viewRect; toolbarRect.size.height = TOOLBAR_HEIGHT;
 
 	mainToolbar = [[ThumbsMainToolbar alloc] initWithFrame:toolbarRect title:toolbarTitle]; // At top
+    
+    if (self.lightColor && self.darkColor) {
+        [self setThemeColors:self.lightColor dark:self.darkColor];
+    }
 
 	mainToolbar.delegate = self;
 

@@ -134,7 +134,19 @@
 	}
 }
 
+- (void)setColors:(UIColor *)lightColor dark:(UIColor *)darkColor
+{
+    ((CAGradientLayer*)self.layer).colors = @[(id)lightColor.CGColor, (id)darkColor.CGColor];
+}
+
 - (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object
+{
+    UIColor *liteColor = [UIColor colorWithWhite:0.82f alpha:0.8f];
+    UIColor *darkColor = [UIColor colorWithWhite:0.32f alpha:0.8f];
+    return [self initWithFrame:frame document:object lightColor:liteColor darkColor:darkColor];
+}
+
+- (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object lightColor:(UIColor*)lightColor darkColor:(UIColor*)darkColor
 {
 	assert(object != nil); // Must have a valid ReaderDocument
 
@@ -146,10 +158,7 @@
 		self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
 		self.backgroundColor = [UIColor clearColor];
 
-		CAGradientLayer *layer = (CAGradientLayer *)self.layer;
-		UIColor *liteColor = [UIColor colorWithWhite:0.82f alpha:0.8f];
-		UIColor *darkColor = [UIColor colorWithWhite:0.32f alpha:0.8f];
-		layer.colors = [NSArray arrayWithObjects:(id)liteColor.CGColor, (id)darkColor.CGColor, nil];
+        [self setColors:lightColor dark:darkColor];
 
 		CGRect shadowRect = self.bounds; shadowRect.size.height = 4.0f; shadowRect.origin.y -= shadowRect.size.height;
 

@@ -27,6 +27,9 @@
 
 @interface UIXToolbarView : UIView
 
+- (id)initWithFrame:(CGRect)frame lightColor:(UIColor*)lightColor darkColor:(UIColor*)darkColor;
+- (void)setColors:(UIColor*)lightColor dark:(UIColor*)darkColor;
+
 @end
 
 #pragma mark -

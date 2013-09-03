@@ -41,6 +41,12 @@
 
 @property (nonatomic, unsafe_unretained, readwrite) id <ReaderViewControllerDelegate> delegate;
 
+// Theme preferences
+@property (strong, nonatomic) UIColor *lightColor;
+@property (strong, nonatomic) UIColor *darkColor;
+-(void)setThemeColors:(UIColor*)lightColor dark:(UIColor*)darkColor;
+
 - (id)initWithReaderDocument:(ReaderDocument *)object;
+
 
 @end

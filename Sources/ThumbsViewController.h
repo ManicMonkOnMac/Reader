@@ -47,6 +47,11 @@
 
 - (id)initWithReaderDocument:(ReaderDocument *)object;
 
+// Theme preferences
+@property (strong, nonatomic) UIColor *lightColor;
+@property (strong, nonatomic) UIColor *darkColor;
+-(void)setThemeColors:(UIColor*)lightColor dark:(UIColor*)darkColor;
+
 @end
 
 #pragma mark -

@@ -278,6 +278,19 @@
 	isVisible = YES; // iOS present modal bodge
 }
 
+#pragma mark Publich methods
+
+- (void)setThemeColors:(UIColor *)lightColor dark:(UIColor *)darkColor
+{
+    // Set theme preferences.
+    _lightColor = lightColor;
+    _darkColor = darkColor;
+    
+    // Update the toolbars with the new theme colors.
+    [mainToolbar setColors:lightColor dark:darkColor];
+    [mainPagebar setColors:lightColor dark:darkColor];
+}
+
 #pragma mark UIViewController methods
 
 - (id)initWithReaderDocument:(ReaderDocument *)object
@@ -335,6 +348,9 @@
 	toolbarRect.size.height = TOOLBAR_HEIGHT;
 
 	mainToolbar = [[ReaderMainToolbar alloc] initWithFrame:toolbarRect document:document]; // At top
+    if (self.lightColor && self.darkColor) {
+        [mainToolbar setColors:self.lightColor dark:self.darkColor];
+    }
 
 	mainToolbar.delegate = self;
 
@@ -346,6 +362,10 @@
 
 	mainPagebar = [[ReaderMainPagebar alloc] initWithFrame:pagebarRect document:document]; // At bottom
 
+    if (self.lightColor && self.darkColor) {
+        [mainPagebar setColors:self.lightColor dark:self.darkColor];
+    }
+    
 	mainPagebar.delegate = self;
 
 	[self.view addSubview:mainPagebar];
@@ -756,7 +776,10 @@
 	if (printInteraction != nil) [printInteraction dismissAnimated:NO]; // Dismiss
 
 	ThumbsViewController *thumbsViewController = [[ThumbsViewController alloc] initWithReaderDocument:document];
-
+    if (self.lightColor && self.darkColor) {
+        [thumbsViewController setThemeColors:self.lightColor dark:self.darkColor];
+    }
+    
 	thumbsViewController.delegate = self; thumbsViewController.title = self.title;
 
 	thumbsViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;

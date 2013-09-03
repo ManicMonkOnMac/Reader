@@ -44,6 +44,13 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
+    UIColor *lightColor = [UIColor colorWithWhite:0.92f alpha:0.8f];
+    UIColor *darkColor = [UIColor colorWithWhite:0.32f alpha:0.8f];
+    return [self initWithFrame:frame lightColor:lightColor darkColor:darkColor];
+}
+
+- (id)initWithFrame:(CGRect)frame lightColor:(UIColor*)lightColor darkColor:(UIColor*)darkColor
+{
 	if ((self = [super initWithFrame:frame]))
 	{
 		self.autoresizesSubviews = YES;
@@ -51,20 +58,22 @@
 		self.contentMode = UIViewContentModeRedraw;
 		self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		self.backgroundColor = [UIColor clearColor];
-
-		CAGradientLayer *layer = (CAGradientLayer *)self.layer;
-		UIColor *liteColor = [UIColor colorWithWhite:0.92f alpha:0.8f];
-		UIColor *darkColor = [UIColor colorWithWhite:0.32f alpha:0.8f];
-		layer.colors = [NSArray arrayWithObjects:(id)liteColor.CGColor, (id)darkColor.CGColor, nil];
-
+        
+        [self setColors:lightColor dark:darkColor];
+        
 		CGRect shadowRect = self.bounds; shadowRect.origin.y += shadowRect.size.height; shadowRect.size.height = SHADOW_HEIGHT;
-
+        
 		UIXToolbarShadow *shadowView = [[UIXToolbarShadow alloc] initWithFrame:shadowRect];
-
-		[self addSubview:shadowView]; 
+        
+		[self addSubview:shadowView];
 	}
-
+    
 	return self;
+}
+
+- (void)setColors:(UIColor *)lightColor dark:(UIColor *)darkColor
+{
+    ((CAGradientLayer*)self.layer).colors = @[(id)lightColor.CGColor, (id)darkColor.CGColor];
 }
 
 @end
