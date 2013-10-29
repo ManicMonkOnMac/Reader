@@ -1,6 +1,6 @@
 //
 //	ThumbsViewController.m
-//	Reader v2.6.1
+//	Reader v2.7.2
 //
 //	Created by Julius Oklamcak on 2011-09-01.
 //	Copyright © 2011-2013 Julius Oklamcak. All rights reserved.
@@ -54,6 +54,8 @@
 
 #pragma mark Constants
 
+#define STATUS_HEIGHT 20.0f
+
 #define TOOLBAR_HEIGHT 44.0f
 
 #define PAGE_THUMB_SMALL 160
@@ -99,48 +101,60 @@
 
 	assert(delegate != nil); assert(document != nil);
 
-	self.view.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
+	self.view.backgroundColor = [UIColor grayColor]; // Neutral gray
 
-	CGRect viewRect = self.view.bounds; // View controller's view bounds
+	CGRect scrollViewRect = self.view.bounds; UIView *fakeStatusBar = nil;
+
+	if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) // iOS 7+
+	{
+		if ([self prefersStatusBarHidden] == NO) // Visible status bar
+		{
+			CGRect statusBarRect = self.view.bounds; // Status bar frame
+			statusBarRect.size.height = STATUS_HEIGHT; // Default status height
+			fakeStatusBar = [[UIView alloc] initWithFrame:statusBarRect]; // UIView
+			fakeStatusBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+			fakeStatusBar.backgroundColor = [UIColor blackColor];
+			fakeStatusBar.contentMode = UIViewContentModeRedraw;
+			fakeStatusBar.userInteractionEnabled = NO;
+
+			scrollViewRect.origin.y += STATUS_HEIGHT; scrollViewRect.size.height -= STATUS_HEIGHT;
+		}
+	}
 
 	NSString *toolbarTitle = [document.fileName stringByDeletingPathExtension];
 
-	CGRect toolbarRect = viewRect; toolbarRect.size.height = TOOLBAR_HEIGHT;
+	CGRect toolbarRect = scrollViewRect; // Toolbar frame
+	toolbarRect.size.height = TOOLBAR_HEIGHT; // Default toolbar height
+	mainToolbar = [[ThumbsMainToolbar alloc] initWithFrame:toolbarRect title:toolbarTitle]; // ThumbsMainToolbar
+	mainToolbar.delegate = self; // ThumbsMainToolbarDelegate
 
-	mainToolbar = [[ThumbsMainToolbar alloc] initWithFrame:toolbarRect title:toolbarTitle]; // At top
-    
     if (self.lightColor && self.darkColor) {
         [self setThemeColors:self.lightColor dark:self.darkColor];
     }
 
-	mainToolbar.delegate = self;
-
 	[self.view addSubview:mainToolbar];
 
-	CGRect thumbsRect = viewRect; UIEdgeInsets insets = UIEdgeInsetsZero;
+	if (fakeStatusBar != nil) [self.view addSubview:fakeStatusBar]; // Add status bar background view
 
-	if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
+	UIEdgeInsets scrollViewInsets = UIEdgeInsetsZero; // Scroll view toolbar insets
+
+	if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) // iPad
 	{
-		thumbsRect.origin.y += TOOLBAR_HEIGHT; thumbsRect.size.height -= TOOLBAR_HEIGHT;
+		scrollViewRect.origin.y += TOOLBAR_HEIGHT; scrollViewRect.size.height -= TOOLBAR_HEIGHT;
 	}
 	else // Set UIScrollView insets for non-UIUserInterfaceIdiomPad case
 	{
-		insets.top = TOOLBAR_HEIGHT;
+		scrollViewInsets.top = TOOLBAR_HEIGHT;
 	}
 
-	theThumbsView = [[ReaderThumbsView alloc] initWithFrame:thumbsRect]; // Rest
-
-	theThumbsView.contentInset = insets; theThumbsView.scrollIndicatorInsets = insets;
-
-	theThumbsView.delegate = self;
-
+	theThumbsView = [[ReaderThumbsView alloc] initWithFrame:scrollViewRect]; // ReaderThumbsView
+	theThumbsView.contentInset = scrollViewInsets; theThumbsView.scrollIndicatorInsets = scrollViewInsets;
+	theThumbsView.delegate = self; // ReaderThumbsViewDelegate
 	[self.view insertSubview:theThumbsView belowSubview:mainToolbar];
 
 	BOOL large = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad);
-
-	NSInteger thumbSize = (large ? PAGE_THUMB_LARGE : PAGE_THUMB_SMALL); // Thumb dimensions
-
-	[theThumbsView setThumbSize:CGSizeMake(thumbSize, thumbSize)]; // Thumb size based on device
+	CGFloat thumbSize = (large ? PAGE_THUMB_LARGE : PAGE_THUMB_SMALL); // Thumb dimensions
+	[theThumbsView setThumbSize:CGSizeMake(thumbSize, thumbSize)]; // Set the thumb size
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -174,6 +188,16 @@
 	mainToolbar = nil; theThumbsView = nil;
 
 	[super viewDidUnload];
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+	return YES;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+	return UIStatusBarStyleLightContent;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -272,7 +296,7 @@
 
 	NSInteger page = (showBookmarked ? [[bookmarked objectAtIndex:index] integerValue] : (index + 1));
 
-	[thumbCell showText:[NSString stringWithFormat:@"%d", page]]; // Page number place holder
+	[thumbCell showText:[NSString stringWithFormat:@"%i", page]]; // Page number place holder
 
 	[thumbCell showBookmark:[document.bookmarks containsIndex:page]]; // Show bookmarked status
 

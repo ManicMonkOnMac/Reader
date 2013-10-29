@@ -124,7 +124,7 @@
 	{
 		NSInteger pages = [document.pageCount integerValue]; // Total pages
 
-		NSString *format = NSLocalizedString(@"%d of %d", @"format"); // Format
+		NSString *format = NSLocalizedString(@"%i of %i", @"format"); // Format
 
 		NSString *number = [NSString stringWithFormat:format, page, pages]; // Text
 
@@ -195,7 +195,7 @@
 		pageNumberLabel.shadowOffset = CGSizeMake(0.0f, 1.0f);
 		pageNumberLabel.shadowColor = [UIColor blackColor];
 		pageNumberLabel.adjustsFontSizeToFitWidth = YES;
-		pageNumberLabel.minimumScaleFactor = 0.75f; // Minimum font size of 12
+		pageNumberLabel.minimumScaleFactor = 0.75f;
 
 		[pageNumberView addSubview:pageNumberLabel]; // Add label view
 

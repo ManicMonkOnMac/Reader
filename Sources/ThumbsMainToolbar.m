@@ -90,12 +90,14 @@
 		UIImage *bookmarkImage = [UIImage imageNamed:@"Reader-Mark-Y"];
 		NSArray *buttonItems = [NSArray arrayWithObjects:thumbsImage, bookmarkImage, nil];
 
+		BOOL useTint = [self respondsToSelector:@selector(tintColor)]; // iOS 7 and up
+
 		UISegmentedControl *showControl = [[UISegmentedControl alloc] initWithItems:buttonItems];
 
 		showControl.frame = CGRectMake(showControlX, BUTTON_Y, SHOW_CONTROL_WIDTH, BUTTON_HEIGHT);
+		showControl.tintColor = (useTint ? [UIColor blackColor] : [UIColor colorWithWhite:0.8f alpha:1.0f]);
 		showControl.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
 		showControl.segmentedControlStyle = UISegmentedControlStyleBar;
-		showControl.tintColor = [UIColor colorWithWhite:0.8f alpha:1.0f];
 		showControl.selectedSegmentIndex = 0; // Default segment index
 		showControl.exclusiveTouch = YES;
 
@@ -122,7 +124,7 @@
 			titleLabel.backgroundColor = [UIColor clearColor];
 			titleLabel.shadowOffset = CGSizeMake(0.0f, 1.0f);
 			titleLabel.adjustsFontSizeToFitWidth = YES;
-			titleLabel.minimumScaleFactor = 0.736842105f; // Minimum font size of 14
+			titleLabel.minimumScaleFactor = 0.75f;
 			titleLabel.text = title;
 
 			[self addSubview:titleLabel]; 
